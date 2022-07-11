@@ -31,28 +31,39 @@ pub enum AddMode {
     Tail,
 }
 
+/// Типы запросов при работе
 #[derive(Debug, PartialEq)]
 pub enum GlobalReq {
     Ping,
     Count,
+    /// Запрос на добавление данных в базу
     Add { key: Key, value: Value, mode: AddMode, },
+    /// Обновление значения в базе
     Update(Key, Value),
+    /// Поиск значения в базе
     Lookup(Key),
+    /// Удаляем значение по ключу
     Remove(Key),
     Lend { timeout: u64, mode: LendMode, },
     Repay { lend_key: u64, key: Key, value: Value, status: RepayStatus, },
     Heartbeat { lend_key: u64, key: Key, timeout: u64, },
     Stats,
+    /// Скидываем значения в базе данных на диск
     Flush,
+    /// Завершаем актор работы с базой данных
     Terminate,
 }
 
+/// Тип с ответами на сообщения
 #[derive(Debug, PartialEq)]
 pub enum GlobalRep {
     Pong,
     Counted(usize),
+    /// Успешно добавили в базу
     Added,
+    /// Уже хранилось в базе данных
     Kept,
+    /// Успешно обновили
     Updated,
     NotFound,
     ValueFound(Value),
