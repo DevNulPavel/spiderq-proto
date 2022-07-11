@@ -58,6 +58,7 @@ pub enum GlobalReq {
 #[derive(Debug, PartialEq)]
 pub enum GlobalRep {
     Pong,
+    /// Получили успешно количество элементов в очереди
     Counted(usize),
     /// Успешно добавили в базу
     Added,
@@ -65,10 +66,15 @@ pub enum GlobalRep {
     Kept,
     /// Успешно обновили
     Updated,
+    /// Не нашли данные
     NotFound,
+    /// Нашли данные по ключу
     ValueFound(Value),
+    /// Значение по ключу не было найдено
     ValueNotFound,
+    /// Успешно удалили данные
     Removed,
+    /// Не смогли удалить данные
     NotRemoved,
     Lent { lend_key: u64, key: Key, value: Value, },
     QueueEmpty,
@@ -87,8 +93,11 @@ pub enum GlobalRep {
         heartbeat: usize,
         stats: usize,
     },
+    /// Успешно смогли сбросить на диск данные
     Flushed,
+    /// Успешно завершилась работа сервера очереди
     Terminated,
+    /// Какая-то ошибка при работе с протоколом
     Error(ProtoError),
 }
 
