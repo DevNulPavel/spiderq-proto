@@ -44,8 +44,11 @@ pub enum GlobalReq {
     Lookup(Key),
     /// Удаляем значение по ключу
     Remove(Key),
+    /// TODO: ???
     Lend { timeout: u64, mode: LendMode, },
+    /// TODO: ???
     Repay { lend_key: u64, key: Key, value: Value, status: RepayStatus, },
+    /// TODO: ???
     Heartbeat { lend_key: u64, key: Key, timeout: u64, },
     Stats,
     /// Скидываем значения в базе данных на диск
