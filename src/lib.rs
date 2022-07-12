@@ -11,6 +11,8 @@ use byteorder::{
 pub type Key = Arc<Vec<u8>>;
 pub type Value = Arc<Vec<u8>>;
 
+// TODO: ???
+/// Тип подтвержения арендованного значения из очереди
 #[derive(Debug, PartialEq)]
 pub enum RepayStatus {
     Penalty,
@@ -19,9 +21,12 @@ pub enum RepayStatus {
     Drop,
 }
 
+/// Тип запроса аренды значения из очереди
 #[derive(Debug, PartialEq)]
 pub enum LendMode {
+    /// Блокируемся на сокете пока не прилететит новое значение
     Block,
+    /// Просто делаем неблокирующую попытку
     Poll,
 }
 
@@ -34,7 +39,9 @@ pub enum AddMode {
 /// Типы запросов при работе
 #[derive(Debug, PartialEq)]
 pub enum GlobalReq {
+    /// Просто ping запрос
     Ping,
+    /// Сколько у нас сейчас элементов в очереди
     Count,
     /// Запрос на добавление данных в базу
     Add { key: Key, value: Value, mode: AddMode, },
@@ -44,12 +51,14 @@ pub enum GlobalReq {
     Lookup(Key),
     /// Удаляем значение по ключу
     Remove(Key),
-    /// TODO: ???
+    /// Берем значение из очереди на определенный таймаут. Если таймаут подтверждения истек
+    /// без подтверждения Repay или обновления таймаута Heartbeat, тогда значение снова будет в очереди.
     Lend { timeout: u64, mode: LendMode, },
-    /// TODO: ???
+    /// Возврат арендованного значения снова в очередь
     Repay { lend_key: u64, key: Key, value: Value, status: RepayStatus, },
-    /// TODO: ???
+    /// Обновление таймаута арендованного значения в очереди
     Heartbeat { lend_key: u64, key: Key, timeout: u64, },
+    /// Статистика
     Stats,
     /// Скидываем значения в базе данных на диск
     Flush,
@@ -79,11 +88,17 @@ pub enum GlobalRep {
     Removed,
     /// Не смогли удалить данные
     NotRemoved,
+    /// Арендовали значение из очереди на какое-то время
     Lent { lend_key: u64, key: Key, value: Value, },
+    /// Нечего арендовать, очередь пустая
     QueueEmpty,
+    /// Подтверждено завершение аренды в очереди после аренды
     Repaid,
+    /// Успешно смогли обновить время аренды элемента в очереди
     Heartbeaten,
+    // TODO: ?
     Skipped,
+    // TODO: ?
     StatsGot {
         ping: usize,
         count: usize,
