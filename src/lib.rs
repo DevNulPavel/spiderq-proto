@@ -11,13 +11,16 @@ use byteorder::{
 pub type Key = Arc<Vec<u8>>;
 pub type Value = Arc<Vec<u8>>;
 
-// TODO: ???
 /// Тип подтвержения арендованного значения из очереди
-#[derive(Debug, PartialEq)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum RepayStatus {
+    // Оставляем значение в очереди, но снижаем приоитет
     Penalty,
+    // Оставляем значение в очереди, но увеличиваем приоритет
     Reward,
+    // TODO: Добавляем элемент в начало очереди
     Front,
+    // Не оставляем элемент в очереди
     Drop,
 }
 
@@ -30,9 +33,12 @@ pub enum LendMode {
     Poll,
 }
 
+/// Куда добавляем элементы в очередь
 #[derive(Debug, PartialEq)]
 pub enum AddMode {
+    /// В начало очереди
     Head,
+    /// В самый конец очереди
     Tail,
 }
 
